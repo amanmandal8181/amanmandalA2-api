@@ -4,6 +4,9 @@ const express = require("express");   // Web framework
 const cors = require("cors");         // frontend to call this API
 require("dotenv").config();           // Load .env file (later)
 
+//import the router BEFORE using it
+const eventsRouter = require("./routes/events");
+
 
 //import run from event_db.js
 const { run } = require("./event_db");
@@ -33,6 +36,9 @@ app.get("/db-ping", async (req, res) => {
   }
 });
 
+
+//mount all /api routes
+app.use("/api", eventsRouter);
 
 
 
