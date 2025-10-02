@@ -90,4 +90,34 @@ router.get("/events/:id", async (req, res) => {
   }
 });
 
+
+
+// GET /api/home
+// Returns upcoming active events for the homepage
+router.get("/home", async (req, res) => {
+  try {
+    // Validate to a safe integer first (min 1, max 24)
+    const limitRaw = Number(req.query.limit);
+    const limit = Number.isFinite(limitRaw) && limitRaw > 0 ? Math.min(limitRaw, 24) : 6;
+
+
+    const sql = `
+      SELECT e.event_id, e.name, e.event_datetime, e.city, e.venue,
+             c.name AS category_name
+      FROM events e
+      JOIN categories c ON e.category_id = c.category_id
+      WHERE e.status = 'active' AND e.event_datetime >= NOW()
+      ORDER BY e.event_datetime ASC
+      LIMIT ${limit}
+    `;
+
+    const rows = await run(sql);            
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to load home events" });
+  }
+});
+
+
 module.exports = router;
