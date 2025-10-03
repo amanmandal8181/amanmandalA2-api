@@ -3,6 +3,8 @@
 const express = require("express");   // Web framework
 const cors = require("cors");         // frontend to call this API
 require("dotenv").config();           // Load .env file (later)
+const path = require("path");         // for index.html
+
 
 //import the router BEFORE using it
 const eventsRouter = require("./routes/events");
@@ -35,6 +37,13 @@ app.get("/db-ping", async (req, res) => {
     res.status(500).json({ error: "DB connection failed" });
   }
 });
+
+// ⬇serve client files and load index.html
+app.use(express.static(path.join(__dirname, "../amanmandalA2-clientside")));
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "../amanmandalA2-clientside/index.html"));
+});
+
 
 
 //mount all /api routes
